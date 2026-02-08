@@ -176,12 +176,18 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = SECURE_HSTS_SECONDS > 0
 SECURE_HSTS_PRELOAD = SECURE_HSTS_SECONDS > 0
 
 # dj-rest-auth & Allauth Configuration
+# dj-rest-auth & Allauth Configuration
 REST_AUTH = {
     'USE_JWT': True,
     'JWT_AUTH_COOKIE': 'my-app-auth',
     'JWT_AUTH_REFRESH_COOKIE': 'my-app-refresh-auth',
     'JWT_AUTH_HTTPONLY': True,  # Prevent JS access
-    'JWT_AUTH_SECURE': config('SESSION_COOKIE_SECURE', default=False, cast=bool), # True in prod
+    
+    # Cross-Domain Cookie Settings (Vercel <-> Render)
+    # in Production (HTTPS), we need SameSite='None' and Secure=True
+    'JWT_AUTH_SAMESITE': 'None' if not DEBUG else 'Lax', 
+    'JWT_AUTH_SECURE': True if not DEBUG else False,
+    
     'SESSION_LOGIN': False, # Disable session auth alongside JWT
 }
 
