@@ -152,11 +152,20 @@ REST_FRAMEWORK = {
 }
 
 # CORS Configuration
+# CORS Configuration
 CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='http://localhost:5173,http://127.0.0.1:5173').split(',')
+CORS_ALLOWED_ORIGINS += [
+    'https://profit-rider-frontend.vercel.app',
+    'https://profitrider-api.onrender.com', # Auto-allow self
+]
 CORS_ALLOW_CREDENTIALS = True  # Required for cookies
 
 # CSRF Configuration
 CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='http://localhost:5173,http://127.0.0.1:5173').split(',')
+CSRF_TRUSTED_ORIGINS += [
+    'https://profit-rider-frontend.vercel.app',
+    'https://profitrider-api.onrender.com',
+]
 
 # Security Settings (Production)
 SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=False, cast=bool)
