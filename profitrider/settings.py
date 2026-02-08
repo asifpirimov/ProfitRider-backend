@@ -199,7 +199,10 @@ ACCOUNT_EMAIL_REQUIRED = True
 # STRIPE_WEBHOOK_SECRET = config('STRIPE_WEBHOOK_SECRET', default='')
 # STRIPE_DOMAIN = config('STRIPE_DOMAIN', default='http://localhost:5173')
 
+
 # Logging Configuration
+# Use console logging in production (cloud-friendly)
+# Use file logging in development (local debugging)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -210,12 +213,6 @@ LOGGING = {
         },
     },
     'handlers': {
-        'file': {
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs' / 'django.log',
-            'formatter': 'verbose',
-        },
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
@@ -223,17 +220,32 @@ LOGGING = {
         },
     },
     'root': {
-        'handlers': ['console', 'file'],
+        'handlers': ['console'],
         'level': 'INFO',
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
         },
     },
 }
+
+# Add file logging only in development
+if DEBUG:
+    import os
+    log_dir = BASE_DIR / 'logs'
+    os.makedirs(log_dir, exist_ok=True)
+    
+    LOGGING['handlers']['file'] = {
+        'level': 'ERROR',
+        'class': 'logging.FileHandler',
+        'filename': log_dir / 'django.log',
+        'formatter': 'verbose',
+    }
+    LOGGING['root']['handlers'].append('file')
+
 
 # Lemon Squeezy Configuration
 LEMONSQUEEZY_API_KEY = config('LEMONSQUEEZY_API_KEY', default='')
